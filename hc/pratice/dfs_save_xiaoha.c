@@ -57,7 +57,7 @@ void dfs(int x,int y,int step)
         if(a[tx][ty]!=1 && book[tx][ty]!=1)
         {
             book[tx][ty]=1;    //尝试该点
-            dfs(tx,ty,step+1);
+            dfs(tx,ty,step+2);
             book[tx][ty]=0;    //尝试结束，收回该点
         }
     }
