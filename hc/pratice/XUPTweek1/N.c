@@ -11,7 +11,7 @@ int main()
             for(j=i;j>0;j--)
                 a[j]=a[j]+a[j-1];
             for(k=0;k<=i;k++)
-                printf("%d",a[k]);
+                printf("%d ",a[k]);
             printf("\n");
         }
 

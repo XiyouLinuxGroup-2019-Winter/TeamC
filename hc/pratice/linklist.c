@@ -1,10 +1,19 @@
 #include <stdio.h>
 #include<stdlib.h>
+
 typedef struct Data
 {
     int n;
     struct Data *next;
 }Node,*LinkList;
+typedef struct RNode
+{
+    int n1;
+    struct RNode *prior;
+    struct RNode *next;
+}Node_Round,*LinkList_Round;
+
+
 
 LinkList Creat_Tailinsert();
 LinkList Creat_Headinsert();
@@ -15,13 +24,16 @@ int Delete_Keynodes(int key,Node *p_head);
 LinkList Find_Node(int i,Node *find);
 LinkList Find_Keynodes(int key,Node *find);
 int Revise(int key,Node *head);
-void print(Node *head);
+void Linklistprint(Node *head);
+int Clean_Linklist(Node *head);  //整表删除
 //循环链表
 LinkList Creat_Round_Linklist();
+LinkList_Round  Creat_PH_Tailinsert_Linklist();
 
 int main()
 {
     Node *head;
+    RNode *head1;
     char select='1';
     while(1)
     {
@@ -36,11 +48,15 @@ int main()
         printf("***********7.查找结点（结点位置）*****\n");
         printf("***********8.查找结点（结点数据）*****\n");
         printf("***********9.修改结点内容*************\n");
+        printf("***********10.建立循环链表************\n");
+        printf("***********11.建立双向链表************\n");
+        printf("***********12.整表删除****************\n");
         printf("***********L.打印链表数据*************\n");
         printf("***********Q.退出*********************\n");
         printf("**************************************\n");
         scanf("%c",&select);
         getchar();
+        head=NULL;
         switch(select)
         {
             case '1'://
@@ -57,13 +73,19 @@ int main()
                 }
             case '3'://
                 {
-                    Add_Headinsert (head);
+                    if(Add_Headinsert (head)==0)
+                        printf("\n插入失败！链表不存在!\n");
+                    else
+                        printf(" 插入成功!");
                     getchar();getchar();
                     break;
                 }
             case '4':
                 {
-                    Add_Tailinsert (head);
+                    if(Add_Tailinsert (head)==0)
+                        printf("\n插入失败！链表不存在!\n");
+                    else
+                        printf(" 插入成功!");
                     getchar();getchar();
                     break;
                 }
@@ -124,10 +146,28 @@ int main()
                     getchar();getchar();
                     break;
                 }
+            case '10':
+                {
+                    head=Creat_Round_Linklist ();
+                    getchar ();getchar ();
+                }
+            case '11':
+                {
+                    head1=Creat_PH_Tailinsert_Linklist ();
+                    getchar ();getchar ();
+                }
+            case '12':
+                {
+                    if(Clean_Linklist (head)==0)//单链表的整表删除
+                        printf("整表删除失败!");
+                    else
+                        printf("整表删除成功!");
+                    getchar ();getchar ();
+                }
             case 'L': 
                 {
                     printf("\n链表的数据如下\n");
-                    print(head);
+                    Linklistprint(head);
                     getchar();getchar();
                     break;
                 }
@@ -183,7 +223,7 @@ LinkList Creat_Headinsert()
 
 int Add_Headinsert(Node *head)
 {
-    if(head->next==NULL)   //链表为空，无需操作  
+    if(head==NULL)   //链表为空，无需操作  
         return 0;
     int n;
     Node *insert;
@@ -200,7 +240,7 @@ int Add_Headinsert(Node *head)
 
 int Add_Tailinsert(Node *head)
 {
-    if(head->next==NULL)
+    if(head==NULL)
         return 0;
     int n;
     Node *insert;
@@ -316,8 +356,13 @@ int Revise(int key,Node *head)
     scanf("%d",&revise->n);
     return 1;
 }
-void print(Node *head)
+void Linklistprint(Node *head)
 {
+    if(head==NULL)
+    {
+        printf("\n 链表为空，没有数据\n");
+        return ;
+    }
     head=head->next;
     while(head!=NULL)
     {
@@ -346,7 +391,47 @@ LinkList Creat_Round_Linklist()
     return tail;
 }
 
-int Round_Add_Headinsert(Node *tail)
+int Clean_Linklist(Node *head)
 {
-
+    if(head==NULL)
+    {
+        return 0;
+    }
+    if(head->next==NULL)
+    {
+        free(head);
+        return 1;
+    }
+    Node *tail;
+    while(tail!=NULL)
+    {
+        tail=head->next;
+        free(head);
+        head=tail;
+    }
+    return 1;
 }
+
+LinkList_Round  Creat_PH_Tailinsert_Linklist()
+{
+    Node_Round  *head,*p1,*p2;
+    head=p1=(LinkList_Round)malloc(sizeof(Node_Round));
+    if(head==NULL)
+        return NULL;
+    p2=(LinkList_Round)malloc(sizeof(Node_Round));
+    if(p2==NULL)
+        return NULL;
+    scanf("%d",&p2->n1);
+    while(p2->n1!=-1)
+    {
+        p1->next = p2;
+        p2->prior = p1;
+        p1=p2;
+        p2=(LinkList_Round)malloc(sizeof(Node_Round));
+        scanf("%d",&p2->n1);
+    }
+    p1->next=NULL;
+    free(p2);
+    return head;
+}
+
