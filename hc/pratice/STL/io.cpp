@@ -7,7 +7,6 @@ int main()
     // 输入包含空格
     //getline(cin,s);
 
-
     //运用+=对字符串进行操作
    /* s+="hello";
     s+=" world";
