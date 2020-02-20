@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
     get_str(&str);
     //str=get_str_01(str);
     printf("%s\n",str);
+    free(str);
     return 0;
 }
 
