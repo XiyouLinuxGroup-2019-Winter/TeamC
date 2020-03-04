@@ -10,6 +10,7 @@ typedef struct BiTNode
     struct BiTNode *lchild , *rchild;   // 左右孩子指针
 }BiNode,*BiTree;
 
+void CreatBiTree (BiTree *T);
 void PreOrderTraveres (BiTree T);
 void InOrderTraveres (BiTree T);
 void PostOrderTraveres (BiTree T);
@@ -17,7 +18,8 @@ void PostOrderTraveres (BiTree T);
 
 int main()
 {
-    
+    BiTree T;
+    CreatBiTree ( &T );    
     return 0;
 }
 
@@ -31,9 +33,11 @@ void CreatBiTree (BiTree *T)
         *T = NULL;
     else
     {
-        *T = (BiTree)malloc(sizeof(TElemType));
+        *T = (BiTree)malloc(sizeof(BiNode));
+        if( !T  )
+            exit(-1);
+        (*T)->data = ch; 
     }
-    (*T)->data = ch; 
     CreatBiTree (&((*T)->lchild));     // 构建左子树
     CreatBiTree (&(*T)->rchild);       // 构建右子树
 }
