@@ -27,6 +27,7 @@
                             #include<fcntl.h>
             函数原型:int creat(const char *pathname,mode_t mode);
             creat()相当于这样使用open()： open(const char*pathname,(O_CREAT | O_WRONLY | O_TRUNC));
+            creat()函数只能以只写的方式打开创建的文件
         3.close()函数
             函数所需头文件:#include<unistd.h>
             函数原型:   int close(int fd);
@@ -144,7 +145,7 @@
         函数执行成功则将结果复制到参数buf所指的内存空间，或时返回自动配置的字符串指针
         失败返回NULL
         4.设置工作目录
-        函数所需头文件：    #include<unistd.h>
+        函数所需头文件：    #include<unistd.h>  
         函数原型:       int chdir(const char *path);
                         int fchdir(int fd);
         chdir 用来将当前工作目录改为由参数path指定的目录
@@ -155,7 +156,7 @@
             函数所需头文件：    #include<sys/types.h>
                                 #include<dirent.h>
             函数原型：  DIR *opendir(const char *name);
-            返回DIR *形态的目录流  （懵）------>类似与文件描述符
+            返回DIR *形态的目录流  （懵）------>类似于FILE文件描述符
                     失败返回NULL
             (2).readdir函数  ------------>用来从参数dir所指向的目录中读取出目录项的信息
             函数所需头文件：    #include<sys/types.h>

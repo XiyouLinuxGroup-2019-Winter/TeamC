@@ -9,6 +9,7 @@
 int main()
 {
     int fd;
+    //文件所有者的信息 r w
    // if((fd = open("example_62.c",O_CREAT | O_EXCL ,S_IRUSR | S_IWUSR )) ==-1)
    // {
         if((fd = creat("example_62.c",S_IWUSR)) == -1){
