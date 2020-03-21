@@ -24,7 +24,9 @@ int main()
         for(j=M;j>=w[i];j--)
         {
                 F[j]=max(F[j],F[j-w[i]]+d[i]);
+                printf("%d ",F[j]);
         }
+
 /*    int res=0;
     for(i=0;i<=M;i++)
     {

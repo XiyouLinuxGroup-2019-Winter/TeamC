@@ -11,15 +11,18 @@
             函数原型:int open(const char *pathname, int flags);
                      int open(const char *pathname, int flags,mode_t mode);
                      第一个参数pathname是打开或者创建的含路径的文件名，第二个参数flags表示打开文件的方式
-                                     O_RDONLY:  只读方式打开文件
+                    //前三个为必选项
+                     O_RDONLY:  只读方式打开文件
                      O_WRONLY:  只写方式打开文件
                      O_RDWR:    读写方式打开文件
+                     
                      O_CREAT:   如果文件不存在，则创建该文件
                      O_EXCL:    如果O_CREAT被设置，此指令会检查文件是否存在，文件如果不存在，则创建该文件，否则导致文件打开出错
                      O_TRUNC:   如果文件已经存在，则删除文件中的原有数据
-                     (flags的叠加可以用 | )     例如：新建文件，如果不存在，则新建，否则，出错-------->O_CREAT | O_EXCL
-                     如果文件被新建，指定其权限为mode(八进制表示法)
-            返回值：成功 文件描述符（大于0的整数）------>*****补充文件描述符
+                     (flags的叠加可以用 | )    
+                     例如：新建文件，如果不存在，则新建，否则，出错-------->O_CREAT | O_EXCL
+                     如果文件被新建，指定其权限为mode(mode & ~umask)
+            返回值：成功 文件描述符（大于0的整数）------>*********返回一个最小的可用的文件描述符
                     失败 -1，可以打印出errno
         2.creat()函数
             函数所需头文件：#include<sys/types.h>
@@ -43,14 +46,17 @@
                     count: 读取的字节数
             函数返回值：成功    返回读取的字节数
                         失败    -1
+                        读到文件末尾  0
         2.write()函数   -------->将数据写入已打开的文件
             函数所需头文件：#include<unistd.h>
             函数原型:   ssize_t write(int fd, void *buf, size_t count);
             函数返回值：成功    返回读取的字节数
                         失败    -1
+                        未写入   0
+            write()函数的第一个参数可以设置为宏，STDOUT_FILENO,STDIN_FILENO,STDERR_FILENO 用来输在显示器上。也可以用1，2，3来代替
             注意：creat只能以可写的方式打开文件-----与open的差别
 四.文件读写指针的移动
-        1.lseek()函数   -------->移动文件读写指针的位置
+        1.lseek()函数   -------->移动文件读写指针的位置,也可以拓展文件大小
             函数所需头文件：#include<sysy/types.h>
                             #include<unistd.h> 
             函数原型:   off_t lseek(int fildes, off_t offset , int whence);
@@ -78,6 +84,7 @@
                       dup2所复制的文件描述符与原来的文件描述符共享各种文件状态。
                       共享所有的锁定，读写位置和各项权限或flags等.
         2.fcntl函数         -------------->可以用来对已打开的文件描述符进行各种控制操作，以改变已打开文件的各种属性
+                也可以用来设置阻塞
             函数所需头文件：#include<unistd.h>
                             #include<fcntl.h>
             函数原型：  int fcntl(int fd, int cmd);
