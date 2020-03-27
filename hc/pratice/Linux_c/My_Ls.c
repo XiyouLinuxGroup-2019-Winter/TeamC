@@ -18,7 +18,6 @@
 #define PARAMR 4
 char *filename[50000];                        //记录目录下文件和子目录的名称
 char pathname[50][50];                        //目录与文件名称
-//int alldircount = 0;
 int count;                                   //记录目录下的文件和子目录的个数
 int maxlen;                                  //记录目录下最长的文件名
 int param_flag = PARAMNO;
@@ -126,7 +125,6 @@ int main(int argc,char *argv[])
                                {
                                     strcpy(pathname[i],".");
                                }
-                               printf("11%s\n",pathname[i]);
                                getdir_name(pathname[i]);
                                quick_sort(filename,0,count-1);
                                for(int j = 0; j < count ;j++)
@@ -162,26 +160,7 @@ int main(int argc,char *argv[])
                                 break;
                            }
                     case 4:{
-/*
-                                printf("%s:\n\n",pathname[i]);
-                                getdir_name(pathname[i]);
-                                quick_sort (filename,0,count-1);
-                                for(int i = 0; i < count-1;i++)
-                                {
-                                    if( strcmp(".",filename[i]) == 0||strcmp("..",filename[i]) == 0)
-                                    {
-                                        continue;
-                                    }
-                                    display_a(filename[i]);
-                                }
-                                printf("\n\n");
-                                for(int i = 0; i < count-1;i++)
-                                {
-                                    free(filename[i]);
-                                }
-                                count =  0;
-  */
-                                getdir_allname(pathname[i]);
+                               getdir_allname(pathname[i]);
                                break;
                             
                            }
@@ -190,8 +169,8 @@ int main(int argc,char *argv[])
             }
             else
             {
-               // memset(pathname,'.',sizeof(pathname));
-               // print_filedata(pathname[i]);
+                memset(pathname,'.',sizeof(pathname));
+               print_filedata(pathname[i]);
             }
         }
         else
@@ -199,10 +178,6 @@ int main(int argc,char *argv[])
             printf("pathname is not file/DIR,line :%d\n",__LINE__);
         }
     }
-    //获取目录下文件和子目录的名称
-    //getdir_name(argv[1]);
-    //文件名排序
-    //quick_sort(filename,0,count-1);
     return 0;
 }
 
