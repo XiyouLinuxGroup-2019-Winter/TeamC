@@ -10,7 +10,7 @@ int main()
     {
         printf("I am child,will die!\n");
         sleep(2);
-        //return 101;
+        return 101;
         while(1)
         {
             printf("No die!HaHa\n");

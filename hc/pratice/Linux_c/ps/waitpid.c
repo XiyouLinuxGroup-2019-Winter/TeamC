@@ -9,7 +9,7 @@ int main()
     if(pid == 0)
     {
         printf("I am child,pid = %d\n",getpid());
-        sleep(2);
+        //sleep(2);
     }
     else if(pid > 0)
     {

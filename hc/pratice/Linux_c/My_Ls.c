@@ -11,6 +11,10 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<time.h>
+#define LIGHT_GRAY    "\033[0;37m"
+#define COL       "\033[0;32;34m"
+#define NONE          "\033[m"
+#define DIR_COL    "\033[1;34m"
 #define MAXLEN 100
 #define PARAMNO 0
 #define PARAMA 1
@@ -24,7 +28,7 @@ int param_flag = PARAMNO;
 int leave_len = MAXLEN;                      //记录每行剩余的长度
 void  getdir_name(char dir_name[]);          //获得目录下文件和子目录名称的函数
 void quick_sort(char *filename1[],int l,int r);//名称排序
-void display_a(char *filename);               //-a
+void display_a(char *filename,char *pathname);               //-a
 void print_filedata(char *filename);
 void  getdir_allname(char dir_name[]);
 
@@ -116,7 +120,7 @@ int main(int argc,char *argv[])
                                 getdir_name(pathname[i]);
                                 quick_sort(filename,0,count-1);
                                 for(int j = 0; j < count ;j++)
-                                    display_a(filename[j]);
+                                    display_a(filename[j],pathname[i]);
                                 printf("\n");
                                 break;
                            }
@@ -132,7 +136,7 @@ int main(int argc,char *argv[])
                                    if(strcmp(filename[j],".") != 0 && strcmp(filename[j],"..") != 0)
                                         print_filedata(filename[j]);
                                }
-                                break;
+                               break;
 
                            }
                     case 3:{//-al
@@ -154,7 +158,7 @@ int main(int argc,char *argv[])
                                 for(int j = 0; j < count ;j++)
                                 {
                                    if(strcmp(filename[j],".") != 0 && strcmp(filename[j],"..") != 0)
-                                        display_a(filename[j]);
+                                        display_a(filename[j],pathname[i]);
                                 }
                                 printf("\n");
                                 break;
@@ -236,15 +240,34 @@ void quick_sort(char *filename[],int l,int r)
     free(x);
 }
 
-void display_a(char *filename)
+void display_a(char *filename,char *pathname)
 {
+    struct stat file;
+    char temp[100];
     int len = strlen(filename);
     if(leave_len < maxlen)
     {
         printf("\n");
         leave_len = MAXLEN;
     }
-    printf("%-s",filename);
+    //文件是什么类型，按颜色输出
+    memset(&file,'\0',sizeof(file));
+    memset(temp,'\0',sizeof(temp));
+    strcpy(temp,pathname);
+    strcat(temp,"/");
+    strcat(temp,filename);
+    if(stat(temp,&file) == -1)
+    {
+        printf("stat error!line : %d\n",__LINE__);
+    }
+    //文件的属性
+    if(S_ISLNK(file.st_mode)) printf(LIGHT_GRAY"%-s"NONE,filename);
+    else if(S_ISREG(file.st_mode)) printf("%-s"NONE,filename);
+    else if(S_ISDIR(file.st_mode)) printf(DIR_COL"%-s"NONE,filename);
+    else if(S_ISCHR(file.st_mode)) printf("%-s"NONE,filename);
+    else if(S_ISBLK(file.st_mode)) printf("%-s"NONE,filename);
+    else if(S_ISFIFO(file.st_mode)) printf("%-s"NONE,filename);
+    else if(S_ISSOCK(file.st_mode)) printf("%-s"NONE,filename);
     printf("  ");   
     leave_len -=  len+2;
 }
@@ -321,7 +344,7 @@ void  getdir_allname(char dir_name[])
                 {
                     continue;
                 }
-                display_a(filename[i]);
+                display_a(filename[i],dir_name);
             }
             printf("\n\n");
             for(int i = 0; i < count-1;i++)
