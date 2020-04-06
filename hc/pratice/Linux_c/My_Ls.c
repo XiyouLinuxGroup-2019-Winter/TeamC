@@ -11,6 +11,7 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<time.h>
+#include<signal.h>
 #define LIGHT_GRAY    "\033[0;37m"
 #define COL       "\033[0;32;34m"
 #define NONE          "\033[m"
@@ -20,17 +21,18 @@
 #define PARAMA 1
 #define PARAML 2
 #define PARAMR 4
-char *filename[50000];                        //记录目录下文件和子目录的名称
-char pathname[50][50];                        //目录与文件名称
-int count;                                   //记录目录下的文件和子目录的个数
-int maxlen;                                  //记录目录下最长的文件名
-int param_flag = PARAMNO;
-int leave_len = MAXLEN;                      //记录每行剩余的长度
-void  getdir_name(char dir_name[]);          //获得目录下文件和子目录名称的函数
-void quick_sort(char *filename1[],int l,int r);//名称排序
-void display_a(char *filename,char *pathname);               //-a
-void print_filedata(char *filename);
-void  getdir_allname(char dir_name[]);
+char *filename[50000];                          //记录目录下文件和子目录的名称
+char pathname[50][50];                          //目录与文件名称
+int count;                                      //记录目录下的文件和子目录的个数
+int maxlen;                                     //记录目录下最长的文件名
+int param_flag = PARAMNO;                       //记录权限位
+int leave_len = MAXLEN;                         //记录每行剩余的长度
+void  getdir_name(char dir_name[]);             //获得目录下文件和子目录名称的函数
+void quick_sort(char *filename1[],int l,int r); //名称排序
+void display_a(char *filename,char *pathname);  //-a
+void print_filedata(char *filename);            //-l
+void  getdir_allname(char dir_name[]);       //-R
+void Signal_Bye_Ctrlc();
 
 int main(int argc,char *argv[])
 {
@@ -101,7 +103,7 @@ int main(int argc,char *argv[])
     for(int i = 0; i < pathname_count ; i++)
     {
         struct stat buf;
-        if(lstat(pathname[i],&buf) != -1)
+        if(lstat(pathname[i],&buf) != -1)//判断是否为单个文件
         {
             if(S_ISDIR(buf.st_mode))
             {
@@ -163,7 +165,7 @@ int main(int argc,char *argv[])
                                 printf("\n");
                                 break;
                            }
-                    case 4:{
+                    case 4:{//-R
                                getdir_allname(pathname[i]);
                                break;
                             
@@ -182,6 +184,7 @@ int main(int argc,char *argv[])
             printf("pathname is not file/DIR,line :%d\n",__LINE__);
         }
     }
+    Signal_Bye_Ctrlc();
     return 0;
 }
 
@@ -214,7 +217,7 @@ void  getdir_name(char dir_name[])
     }
     closedir(dir);
 }
-
+//对文件名进行排序
 void quick_sort(char *filename[],int l,int r)
 {
     if( l >= r ) return;
@@ -361,3 +364,11 @@ void  getdir_allname(char dir_name[])
     return;
 }
 
+void Signal_Bye_Ctrlc()
+{
+    sigset_t Bye;
+    sigemptyset(&Bye);//将信号集设置为空
+    sigaddset(&Bye,SIGINT);//在set信号集中加入ctrl + c
+    sigprocmask(SIG_BLOCK,&Bye,NULL);
+
+}
