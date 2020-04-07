@@ -12,10 +12,12 @@
 #include<unistd.h>
 #include<time.h>
 #include<signal.h>
-#define LIGHT_GRAY    "\033[0;37m"
-#define COL       "\033[0;32;34m"
-#define NONE          "\033[m"
 #define DIR_COL    "\033[1;34m"
+#define LINK_COL   "\033[1;30m"
+#define S_COL "\033[1;37m"
+#define F_COL    "\033[1;36m"
+#define O_COL "\033[1;35m"
+#define NONE    "\033[m"
 #define MAXLEN 100
 #define PARAMNO 0
 #define PARAMA 1
@@ -264,13 +266,20 @@ void display_a(char *filename,char *pathname)
         printf("stat error!line : %d\n",__LINE__);
     }
     //文件的属性
-    if(S_ISLNK(file.st_mode)) printf(LIGHT_GRAY"%-s"NONE,filename);
-    else if(S_ISREG(file.st_mode)) printf("%-s"NONE,filename);
-    else if(S_ISDIR(file.st_mode)) printf(DIR_COL"%-s"NONE,filename);
-    else if(S_ISCHR(file.st_mode)) printf("%-s"NONE,filename);
-    else if(S_ISBLK(file.st_mode)) printf("%-s"NONE,filename);
-    else if(S_ISFIFO(file.st_mode)) printf("%-s"NONE,filename);
-    else if(S_ISSOCK(file.st_mode)) printf("%-s"NONE,filename);
+    if(S_ISLNK(file.st_mode)) 
+        printf(LINK_COL"%-s"NONE,filename);
+    else if(S_ISREG(file.st_mode)) 
+        printf("%-s",filename);
+    else if(S_ISDIR(file.st_mode)) 
+        printf(DIR_COL"%-s"NONE,filename);
+    else if(S_ISCHR(file.st_mode)) 
+        printf(S_COL"%-s"NONE,filename);
+    else if(S_ISBLK(file.st_mode)) 
+        printf(S_COL"%-s"NONE,filename);
+    else if(S_ISFIFO(file.st_mode)) 
+        printf(F_COL"%-s"NONE,filename);
+    else if(S_ISSOCK(file.st_mode)) 
+        printf(O_COL"%-s"NONE,filename);
     printf("  ");   
     leave_len -=  len+2;
 }
