@@ -2,7 +2,8 @@
 
 int main()
 {
-    for(int i = 14; i >= 0; i--)
+    //无限循环
+    for(unsigned int i = 14; i >= 0; i--)
     {
         printf("$%d\n",i);
     }

@@ -54,7 +54,7 @@ void siftup(int i)
     return ;
 }
 
-//建立最小堆
+//建立堆
 void creat()
 {
     for(int i = (n-1)/2 ; i>=0 ; i--)
