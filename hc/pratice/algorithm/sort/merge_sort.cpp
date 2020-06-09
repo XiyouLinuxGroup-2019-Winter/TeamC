@@ -1,4 +1,5 @@
-99 6 6 10 38 42 51 76 84 48 #include <algorithm>
+//99 6 6 10 38 42 51 76 84 48 
+#include <algorithm>
 #include<iostream>
 using namespace std;
 const int N = 1000010;
