@@ -33,11 +33,12 @@ void  getdir_name(char dir_name[]);             //获得目录下文件和子目
 void quick_sort(char *filename1[],int l,int r); //名称排序
 void display_a(char *filename,char *pathname);  //-a
 void print_filedata(char *filename);            //-l
-void  getdir_allname(char dir_name[]);       //-R
-void Signal_Bye_Ctrlc();
+void Signal_Bye_Ctrlc();                        //屏蔽ctrl + c
+void display_dir(int flag,char*name);           //-R
 
 int main(int argc,char *argv[])
 {
+    Signal_Bye_Ctrlc();
     //解析命令行参数
     int j = 0;
     int param_count = 0;
@@ -168,7 +169,8 @@ int main(int argc,char *argv[])
                                 break;
                            }
                     case 4:{//-R
-                               getdir_allname(pathname[i]);
+                            //   getdir_allname(pathname[i]);
+                              display_dir(4,"/");
                                break;
                             
                            }
@@ -186,7 +188,6 @@ int main(int argc,char *argv[])
             printf("pathname is not file/DIR,line :%d\n",__LINE__);
         }
     }
-    Signal_Bye_Ctrlc();
     return 0;
 }
 
@@ -332,45 +333,89 @@ void print_filedata(char *filename)
            ,file.st_size,timebuf,filename);
 }
 
-void  getdir_allname(char dir_name[])
+void display_dir(int flag,char*name) 
 {
-    DIR *dirall;
-    char newdirname[5120] = {0};
-    dirall = opendir(dir_name);
-    struct dirent * filed;
-    while( (filed = readdir(dirall)) != NULL)
+    DIR * dir;
+    struct dirent  *ptr;
+    int i,count1 = 0;
+    struct stat buf;
+    char name_dir[10000];
+    if(chdir(name)<0)                              //将输入的目录改为当前目录，下面操作的前提
     {
-        if( strcmp(".",filed->d_name) == 0||strcmp("..",filed->d_name) == 0)
-        {
-            continue;
-        }
-        if(filed->d_type == DT_DIR)
-        {
-            sprintf(newdirname,"%s/%s",dir_name,filed->d_name);
-            printf("%s:\n\n",newdirname);
-            getdir_name(newdirname);
-            quick_sort (filename,0,count-1);
-            for(int i = 0; i < count-1;i++)
-            {
-                if( strcmp(".",filename[i]) == 0||strcmp("..",filename[i]) == 0)
-                {
-                    continue;
-                }
-                display_a(filename[i],dir_name);
-            }
-            printf("\n\n");
-            for(int i = 0; i < count-1;i++)
-            {
-                free(filename[i]);
-            }
-            count =  0;
-            getdir_allname (newdirname);
-        }
-        else
-            return;
+
     }
-    closedir(dirall);
-    return;
+    if(getcwd(name_dir,10000)<0)
+    {
+
+    }
+    printf("%s:\n",name_dir);
+    dir = opendir(name_dir);     //用新获得的路径打开目录
+    if(dir==NULL)
+    {
+        printf("opendir error! line:%d",__LINE__);
+    }
+    while((ptr = readdir(dir))!=NULL)
+    {
+        count1++;
+    }
+    closedir(dir);
+ 
+    //动态数组
+    char**filenames =(char**)malloc(count1*sizeof(char*));    //要进行初始化 
+    memset(filenames,0,sizeof(char*)*count1);
+    for(i=0;i<count1;i++)
+    {
+        filenames[i]=(char*)malloc(256*sizeof(char));
+        memset(filenames[i],0,sizeof(char)*256);
+    }
+ 
+    dir = opendir(name_dir);
+    for(i=0;i<count1;i++)
+    {
+        ptr = readdir(dir);
+        if(ptr == NULL)
+        {
+            printf("readdir error! line:%d",__LINE__);
+        }
+        if(strcmp(ptr->d_name,"..") != 0 && strcmp(ptr->d_name,".") != 0)
+            printf("%s ",ptr->d_name);
+        printf("\n");
+        strcat(filenames[i],ptr->d_name);    //这里要注意用之前的初始化
+    }
+    if(flag>3)
+    {                         //递归实现核心部分
+      for(i=0;i<count1;i++)
+      {
+ 
+          if(lstat(filenames[i],&buf)==-1)
+          {
+              //防止没有权限的文件打不开
+              return ;
+              printf("lstat error! line:%d",__LINE__);
+              
+          }
+          if(strcmp(filenames[i],"..")==0)
+          continue;
+          if(strcmp(filenames[i],".")==0)
+          continue;
+          if(S_ISDIR(buf.st_mode))
+          {
+            display_dir(flag,filenames[i]);
+          }
+          else if(!S_ISDIR(buf.st_mode))
+          {
+             continue;
+          }
+            chdir("../");          //处理完一个目录后返回上一层
+        }
+ 
+    }
+    for(i=0;i<count1;i++)
+    {
+        free(filenames[i]);
+    }
+    free(filenames);
+    closedir(dir);          //在函数开始时打开，结束时关闭
 }
 
 void Signal_Bye_Ctrlc()
